@@ -1,0 +1,22 @@
+services:
+  dolphinscheduler:
+    image: apache/dolphinscheduler-standalone-server:latest
+    container_name: dolphinscheduler
+    hostname: dolphinscheduler
+    ports:
+      - "12345:12345"
+    volumes:
+      - dolphinscheduler-data:/tmp/dolphinscheduler
+    restart: unless-stopped
+    environment:
+      - TZ=Asia/Shanghai
+    networks:
+      - dolphinscheduler-network
+
+networks:
+  dolphinscheduler-network:
+    driver: bridge
+
+volumes:
+  dolphinscheduler-data:
+
