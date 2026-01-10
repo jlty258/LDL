@@ -1,0 +1,5 @@
+# dbt 模型目录
+# 模型文件将按层级组织：
+# - staging/      : Staging 层（对应 ODS）
+# - intermediate/ : Intermediate 层（对应 DWD）
+# - marts/        : Marts 层（对应 DWS + ADS）

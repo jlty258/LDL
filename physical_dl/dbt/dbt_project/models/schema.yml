@@ -1,0 +1,17 @@
+version: 2
+
+models:
+  - name: test_model
+    description: "测试模型 - 验证 dbt 基本功能"
+    columns:
+      - name: id
+        description: "ID"
+        tests:
+          - unique
+          - not_null
+      - name: name
+        description: "名称"
+        tests:
+          - not_null
+      - name: created_at
+        description: "创建时间"

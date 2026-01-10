@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  dbt:
+    image: ghcr.io/dbt-labs/dbt-postgres:latest
+    container_name: dbt-test
+    hostname: dbt
+    working_dir: /usr/app/dbt
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+      - ./dbt_project:/usr/app/dbt
+      - ./profiles:/root/.dbt
+    networks:
+      - db-network
+    entrypoint: ["/bin/sh", "-c", "tail -f /dev/null"]
+    restart: unless-stopped
+
+networks:
+  db-network:
+    external: true
+    name: physical_dl_db-network

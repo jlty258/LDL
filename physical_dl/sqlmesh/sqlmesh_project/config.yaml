@@ -1,0 +1,14 @@
+gateways:
+  local:
+    connection:
+      type: postgres
+      host: postgres-db
+      port: 5432
+      user: postgres
+      password: postgres123
+      database: sqlExpert
+
+default_gateway: local
+
+model_defaults:
+  dialect: postgres

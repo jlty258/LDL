@@ -1,0 +1,60 @@
+{
+  "services": {
+    "mysql": {
+      "name": "MySQL 数据库",
+      "container_name": "mysql-db",
+      "host": "localhost",
+      "port": 3306,
+      "database": "sqlExpert",
+      "username": "sqluser",
+      "password": "sqlpass123",
+      "root_password": "root123",
+      "connection_string": "mysql://sqluser:sqlpass123@localhost:3306/sqlExpert",
+      "jdbc_url": "jdbc:mysql://localhost:3306/sqlExpert?useSSL=false&serverTimezone=Asia/Shanghai",
+      "driver": "com.mysql.cj.jdbc.Driver",
+      "version": "8.0"
+    },
+    "postgres": {
+      "name": "PostgreSQL 数据库",
+      "container_name": "postgres-db",
+      "host": "localhost",
+      "port": 5432,
+      "database": "sqlExpert",
+      "username": "postgres",
+      "password": "postgres123",
+      "connection_string": "postgresql://postgres:postgres123@localhost:5432/sqlExpert",
+      "jdbc_url": "jdbc:postgresql://localhost:5432/sqlExpert",
+      "driver": "org.postgresql.Driver",
+      "version": "15"
+    },
+    "airflow": {
+      "name": "Apache Airflow",
+      "container_name": "airflow-standalone",
+      "web_ui": "http://localhost:8080",
+      "username": "airflow",
+      "password": "airflow",
+      "api_url": "http://localhost:8080/api/v1",
+      "version": "2.9.0",
+      "executor": "SequentialExecutor"
+    },
+    "dolphinscheduler": {
+      "name": "Apache DolphinScheduler",
+      "container_name": "dolphinscheduler",
+      "web_ui": "http://localhost:12345",
+      "username": "admin",
+      "password": "dolphinscheduler123",
+      "api_url": "http://localhost:12345/dolphinscheduler",
+      "version": "latest"
+    }
+  },
+  "network": {
+    "name": "services-network",
+    "driver": "bridge"
+  },
+  "ports": {
+    "mysql": 3306,
+    "postgres": 5432,
+    "airflow": 8080,
+    "dolphinscheduler": 12345
+  }
+}

@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  sqlmesh:
+    image: supajerm/sqlmesh:latest
+    container_name: sqlmesh-test
+    hostname: sqlmesh
+    working_dir: /workspace
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+      - ./sqlmesh_project:/workspace
+    networks:
+      - db-network
+    entrypoint: ["/bin/sh", "-c", "tail -f /dev/null"]
+    restart: unless-stopped
+
+networks:
+  db-network:
+    external: true
+    name: physical_dl_db-network

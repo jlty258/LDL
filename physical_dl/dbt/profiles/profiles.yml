@@ -1,0 +1,12 @@
+dbt_test_profile:
+  target: dev
+  outputs:
+    dev:
+      type: postgres
+      host: postgres-db
+      user: postgres
+      password: postgres123
+      port: 5432
+      dbname: sqlExpert
+      schema: dbt_test
+      threads: 4

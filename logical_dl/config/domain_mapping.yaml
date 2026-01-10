@@ -1,0 +1,96 @@
+domains:
+  sales:
+    name: 销售域
+    description: 订单、客户相关业务
+    ods_tables:
+      - ods_order_master
+      - ods_order_detail
+      - ods_customer_master
+    dwd_tables:
+      - dwd_order_fact
+      - dwd_customer_dim
+    dws_tables:
+      - dws_order_daily
+    ads_tables:
+      - ads_sales_analysis
+    dependencies: []
+    priority: 1
+  
+  production:
+    name: 生产域
+    description: 生产计划、工单相关业务
+    ods_tables:
+      - ods_production_plan
+      - ods_production_order
+      - ods_bom
+    dwd_tables:
+      - dwd_production_fact
+    dws_tables:
+      - dws_production_daily
+    ads_tables:
+      - ads_production_analysis
+    dependencies: []
+    priority: 2
+  
+  inventory:
+    name: 库存域
+    description: 库存、物料相关业务
+    ods_tables:
+      - ods_inventory
+      - ods_material_master
+      - ods_warehouse_master
+    dwd_tables:
+      - dwd_inventory_fact
+      - dwd_material_dim
+    dws_tables:
+      - dws_inventory_daily
+    ads_tables:
+      - ads_inventory_analysis
+    dependencies: []
+    priority: 3
+  
+  purchase:
+    name: 采购域
+    description: 采购、供应商相关业务
+    ods_tables:
+      - ods_purchase_order
+      - ods_purchase_detail
+      - ods_supplier_master
+    dwd_tables:
+      - dwd_purchase_fact
+    dws_tables:
+      - dws_purchase_daily
+    ads_tables:
+      - ads_purchase_analysis
+    dependencies: []
+    priority: 4
+  
+  quality:
+    name: 质量域
+    description: 质量检验、不合格品相关业务
+    ods_tables:
+      - ods_quality_inspection
+      - ods_defect_record
+    dwd_tables:
+      - dwd_quality_fact
+    dws_tables:
+      - dws_quality_daily
+    ads_tables:
+      - ads_quality_analysis
+    dependencies: [production]
+    priority: 5
+  
+  cost:
+    name: 成本域
+    description: 成本中心、成本明细相关业务
+    ods_tables:
+      - ods_cost_center
+      - ods_cost_detail
+    dwd_tables:
+      - dwd_cost_fact
+    dws_tables:
+      - dws_cost_daily
+    ads_tables:
+      - ads_cost_analysis
+    dependencies: [production, purchase]
+    priority: 6

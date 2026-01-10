@@ -1,0 +1,53 @@
+migration_plan:
+  phases:
+    - name: 准备阶段
+      duration: 2
+      unit: weeks
+      tasks:
+        - sql_analysis
+        - tool_setup
+        - environment_preparation
+    
+    - name: 试点迁移
+      duration: 2
+      unit: weeks
+      domain: sales
+      tasks:
+        - convert_sql
+        - migrate_staging
+        - migrate_dwd
+        - migrate_dws
+        - migrate_ads
+        - verify_data
+    
+    - name: 全面迁移
+      duration: 4
+      unit: weeks
+      domains: [production, inventory, purchase, quality, cost]
+      tasks:
+        - convert_sql
+        - migrate_all_layers
+        - verify_data
+        - performance_test
+    
+    - name: 上线阶段
+      duration: 1
+      unit: weeks
+      tasks:
+        - scheduler_integration
+        - monitoring_setup
+        - production_deployment
+
+  rollback_plan:
+    - backup_before_migration
+    - keep_original_system_running
+    - gradual_cutover
+    - rollback_procedure
+
+  domain_priority:
+    sales: 1
+    production: 2
+    inventory: 3
+    purchase: 4
+    quality: 5
+    cost: 6

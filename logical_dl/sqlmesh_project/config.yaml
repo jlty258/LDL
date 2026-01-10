@@ -1,0 +1,51 @@
+gateways:
+  mysql:
+    connection:
+      type: mysql
+      host: localhost
+      port: 3306
+      user: sqluser
+      password: ${MYSQL_PASSWORD}
+      database: sqlExpert
+      catalog: sqlExpert
+  
+  postgres:
+    connection:
+      type: postgres
+      host: localhost
+      port: 5432
+      user: postgres
+      password: ${POSTGRES_PASSWORD}
+      database: sqlExpert
+      catalog: sqlExpert
+  
+  greenplum:
+    connection:
+      type: postgres
+      host: gp-master
+      port: 5432
+      user: gpadmin
+      password: ${GP_PASSWORD}
+      database: sqlExpert
+      catalog: sqlExpert
+
+default_gateway: mysql
+
+model_defaults:
+  dialect: postgres
+  schema: default
+  start: '2020-01-01'
+  end: '2024-12-31'
+
+environments:
+  dev:
+    start: '2020-01-01'
+    end: '2024-12-31'
+  
+  staging:
+    start: '2020-01-01'
+    end: '2024-12-31'
+  
+  prod:
+    start: '2020-01-01'
+    end: '2024-12-31'

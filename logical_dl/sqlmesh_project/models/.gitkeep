@@ -1,0 +1,6 @@
+# SQLMesh 模型目录
+# 模型文件将按层级组织：
+# - ods/  : ODS 层模型
+# - dwd/  : DWD 层模型
+# - dws/  : DWS 层模型
+# - ads/  : ADS 层模型

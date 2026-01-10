@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv
+
+# dbt
+dbt_project/target/
+dbt_project/dbt_packages/
+dbt_project/.dbt/
+
+# SQLMesh
+sqlmesh_project/.sqlmesh/
+
+# 分析结果
+analysis_results.json
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# 环境变量
+.env
+*.env

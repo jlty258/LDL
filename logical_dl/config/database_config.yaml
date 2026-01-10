@@ -1,0 +1,41 @@
+databases:
+  mysql:
+    type: mysql
+    host: localhost
+    port: 3306
+    database: sqlExpert
+    username: sqluser
+    password: ${MYSQL_PASSWORD}
+    charset: utf8mb4
+    connection_pool_size: 10
+  
+  postgres:
+    type: postgres
+    host: localhost
+    port: 5432
+    database: sqlExpert
+    username: postgres
+    password: ${POSTGRES_PASSWORD}
+    schema: public
+    connection_pool_size: 10
+  
+  greenplum:
+    type: postgres
+    host: gp-master
+    port: 5432
+    database: sqlExpert
+    username: gpadmin
+    password: ${GP_PASSWORD}
+    schema: public
+    connection_pool_size: 20
+    # Greenplum 特定配置
+    gp_distribution_policy: 'DISTRIBUTED BY (id)'
+  
+  clickhouse:
+    type: clickhouse
+    host: localhost
+    port: 8123
+    database: sqlExpert
+    username: default
+    password: ''
+    connection_pool_size: 10
