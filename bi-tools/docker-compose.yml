@@ -1,0 +1,49 @@
+services:
+  # Appsmith - 低代码平台，用于数据查看、SQL 执行和数据探查
+  # 简化版：使用内置数据库，不单独部署 MongoDB 和 Redis
+  appsmith:
+    image: appsmith/appsmith-ce:latest
+    container_name: appsmith
+    ports:
+      - "8888:80"
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+      - appsmith-stacks:/appsmith-stacks
+    restart: unless-stopped
+    networks:
+      - bi-network
+
+  # Lightdash - BI 工具，基于 dbt
+  # 简化版：使用项目现有的 PostgreSQL（如果不需要独立数据库，可以注释掉）
+  lightdash:
+    image: lightdash/lightdash:latest
+    container_name: lightdash
+    ports:
+      - "8889:8080"
+    environment:
+      - LIGHTDASH_SECRET_KEY=lightdash_secret_key_change_in_production
+      - LIGHTDASH_DATABASE_HOST=postgres-db
+      - LIGHTDASH_DATABASE_PORT=5432
+      - LIGHTDASH_DATABASE_NAME=sqlExpert
+      - LIGHTDASH_DATABASE_USER=postgres
+      - LIGHTDASH_DATABASE_PASSWORD=postgres123
+      - LIGHTDASH_SITE_URL=http://localhost:8889
+      - TZ=Asia/Shanghai
+    volumes:
+      - lightdash-data:/app/.lightdash
+    restart: unless-stopped
+    networks:
+      - bi-network
+      - db-network
+
+networks:
+  bi-network:
+    driver: bridge
+  db-network:
+    external: true
+    name: physical_dl_db-network
+
+volumes:
+  appsmith-stacks:
+  lightdash-data:
