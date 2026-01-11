@@ -50,7 +50,7 @@ Total: **30 DAGs** covering all ETL workflows:
 
 Before running the DAGs, configure the MySQL connection in Airflow:
 
-1. Access Airflow Web UI: http://localhost:8080
+1. Access Airflow Web UI: http://100.126.111.70:8080 (使用 Tailscale IP)
 2. Go to **Admin** → **Connections**
 3. Add a new connection:
    - **Connection Id**: `mysql_default`

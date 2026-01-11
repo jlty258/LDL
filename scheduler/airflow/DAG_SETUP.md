@@ -18,13 +18,13 @@ datawarehouse 中的 DAG 文件已经直接挂载到 Airflow 容器中：
 
 DAG 文件使用 `mysql_default` 连接 ID，需要在 Airflow Web UI 中配置：
 
-1. 访问 Airflow Web UI: http://localhost:8080
+1. 访问 Airflow Web UI: http://100.126.111.70:8080 (使用 Tailscale IP)
 2. 登录（用户名/密码: airflow/airflow）
 3. 进入 **Admin** → **Connections**
 4. 添加新连接或编辑 `mysql_default`：
    - **Connection Id**: `mysql_default`
    - **Connection Type**: `MySQL`
-   - **Host**: `mysql-db` (容器网络内) 或 `localhost` (从宿主机)
+   - **Host**: `mysql-db` (容器网络内) 或 `100.126.111.70` (Tailscale IP，从宿主机)
    - **Schema**: `sqlExpert`
    - **Login**: `sqluser`
    - **Password**: `sqlpass123`

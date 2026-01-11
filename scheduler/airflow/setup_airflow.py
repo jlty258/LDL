@@ -8,11 +8,14 @@ Airflow 配置脚本
 import requests
 import json
 import sys
+import os
 from typing import Dict, Optional
 from requests.auth import HTTPBasicAuth
 
 # Airflow 配置
-AIRFLOW_BASE_URL = "http://localhost:8080"
+# Use Tailscale IP for remote access, or localhost for local access
+TAILSCALE_IP = os.getenv("TAILSCALE_IP", "100.126.111.70")
+AIRFLOW_BASE_URL = f"http://{TAILSCALE_IP}:8080"
 AIRFLOW_API_URL = f"{AIRFLOW_BASE_URL}/api/v1"
 AIRFLOW_USERNAME = "airflow"
 AIRFLOW_PASSWORD = "airflow"
@@ -21,7 +24,7 @@ AIRFLOW_PASSWORD = "airflow"
 MYSQL_CONNECTION = {
     "connection_id": "mysql_default",
     "conn_type": "mysql",
-    "host": "mysql-db",  # 容器网络内使用容器名，宿主机使用 localhost
+    "host": "mysql-db",  # 容器网络内使用容器名，宿主机使用 Tailscale IP
     "schema": "sqlExpert",
     "login": "sqluser",
     "password": "sqlpass123",
@@ -289,7 +292,7 @@ def main():
     print("配置完成！")
     print("=" * 60)
     print("\n提示:")
-    print("  - 访问 Web UI: http://localhost:8080")
+    print(f"  - 访问 Web UI: {AIRFLOW_BASE_URL}")
     print("  - 用户名/密码: airflow/airflow")
     print("  - 如需启用 DAG，请在 Web UI 中操作或使用此脚本的扩展功能")
 

@@ -103,7 +103,7 @@ MYSQL_CONNECTION = {
 如果 Airflow 运行在不同的地址或使用不同的凭据：
 
 ```python
-AIRFLOW_BASE_URL = "http://localhost:8080"
+AIRFLOW_BASE_URL = "http://100.126.111.70:8080"  # 使用 Tailscale IP
 AIRFLOW_USERNAME = "airflow"
 AIRFLOW_PASSWORD = "airflow"
 ```
@@ -145,7 +145,7 @@ for dag in dags:
 
 如果提示 "无法连接到 Airflow 服务"：
 1. 检查 Airflow 是否运行: `docker ps | grep airflow`
-2. 检查端口是否正确: `http://localhost:8080`
+2. 检查端口是否正确: `http://100.126.111.70:8080` (使用 Tailscale IP)
 3. 等待服务完全启动（首次启动需要 30-60 秒）
 
 ### 认证失败

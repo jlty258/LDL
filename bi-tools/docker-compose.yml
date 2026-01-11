@@ -29,7 +29,7 @@ services:
       - LIGHTDASH_DATABASE_NAME=sqlExpert
       - LIGHTDASH_DATABASE_USER=postgres
       - LIGHTDASH_DATABASE_PASSWORD=postgres123
-      - LIGHTDASH_SITE_URL=http://localhost:8889
+      - LIGHTDASH_SITE_URL=http://100.126.111.70:8889
       - TZ=Asia/Shanghai
     volumes:
       - ../data_volume/lightdash-data:/app/.lightdash

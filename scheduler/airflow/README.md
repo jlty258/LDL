@@ -24,7 +24,7 @@ standalone 模式会自动初始化数据库和创建默认用户。
 
 ### 2. 访问 Web UI
 
-- **地址**: http://localhost:8080
+- **地址**: http://100.126.111.70:8080 (使用 Tailscale IP)
 - **用户名**: airflow
 - **密码**: airflow
 

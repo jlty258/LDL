@@ -106,7 +106,7 @@ if __name__ == "__main__":
         if success:
             print("\n✓ 数据源创建完成")
             print("\n提示: 如果数据源创建失败，请手动在 DolphinScheduler Web UI 中创建：")
-            print("1. 访问: http://localhost:12345")
+            print(f"1. 访问: http://{os.getenv('TAILSCALE_IP', '100.126.111.70')}:12345")
             print("2. 进入 '数据源中心'")
             print("3. 创建 MySQL 数据源，名称为 'MySQL'")
         else:
@@ -115,7 +115,7 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"\n❌ 执行失败: {e}")
         print("\n请手动在 DolphinScheduler Web UI 中创建数据源：")
-        print("1. 访问: http://localhost:12345")
+        print(f"1. 访问: http://{os.getenv('TAILSCALE_IP', '100.126.111.70')}:12345")
         print("2. 进入 '数据源中心'")
         print("3. 创建 MySQL 数据源，名称为 'MySQL'")
         sys.exit(1)

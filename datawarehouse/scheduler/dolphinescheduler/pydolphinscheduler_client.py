@@ -27,7 +27,7 @@ class PyDolphinSchedulerClient:
     """PyDolphinScheduler 客户端封装"""
     
     def __init__(self, user="admin", password="dolphinscheduler123", 
-                 host="localhost", port=12345, project_name="制造业数仓"):
+                 host=os.getenv("TAILSCALE_IP", "100.126.111.70"), port=12345, project_name="制造业数仓"):
         """
         初始化 PyDolphinScheduler 客户端
         
@@ -361,7 +361,7 @@ def get_client_from_env():
     return PyDolphinSchedulerClient(
         user=os.getenv('DS_USERNAME', 'admin'),
         password=os.getenv('DS_PASSWORD', 'dolphinscheduler123'),
-        host=os.getenv('DS_HOST', 'localhost'),
+        host=os.getenv('DS_HOST', os.getenv('TAILSCALE_IP', '100.126.111.70')),
         port=int(os.getenv('DS_PORT', '12345')),
         project_name=os.getenv('DS_PROJECT_NAME', '制造业数仓')
     )
