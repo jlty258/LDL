@@ -21,7 +21,8 @@ RUN apt-get update && \
     pip install \
     requests>=2.31.0 \
     mysql-connector-python>=8.2.0 \
-    psycopg2-binary>=2.9.9 && \
+    psycopg2-binary>=2.9.9 \
+    apache-dolphinscheduler>=3.0.0 && \
     apt-get purge -y gcc && \
     apt-get autoremove -y && \
     apt-get clean && \

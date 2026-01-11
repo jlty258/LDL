@@ -1,0 +1,43 @@
+{
+  "name": "dwd_04_purchase_fact_etl",
+  "description": "DWD层-采购事实表ETL",
+  "globalParams": [],
+  "tasks": [
+    {
+      "name": "dwd_04_purchase_fact_etl_task",
+      "description": "DWD层-采购事实表ETL",
+      "taskType": "SQL",
+      "taskParams": {
+        "type": "MYSQL",
+        "datasource": 1,
+        "sql": "-- 采购事实表数据清洗转换\nINSERT INTO dwd_purchase_fact SELECT * FROM ods_purchase_order;",
+        "sqlType": "0",
+        "sendEmail": false,
+        "displayRows": 10,
+        "localParams": [],
+        "resourceList": [],
+        "dependence": {},
+        "conditionResult": {
+          "successNode": [],
+          "failedNode": []
+        },
+        "waitStartTimeout": {}
+      },
+      "flag": "YES",
+      "taskPriority": "MEDIUM",
+      "workerGroup": "default",
+      "timeoutFlag": "CLOSE",
+      "timeoutNotifyStrategy": null,
+      "timeout": 0
+    }
+  ],
+  "tenantId": 1,
+  "timeout": 0,
+  "releaseState": "ONLINE",
+  "param": null,
+  "executionType": "PARALLEL",
+  "schedule": {
+    "crontab": "0 0 3 * * ?",
+    "timezoneId": "Asia/Shanghai"
+  }
+}

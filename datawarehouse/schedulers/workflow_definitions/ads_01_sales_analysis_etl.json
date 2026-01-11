@@ -1,0 +1,43 @@
+{
+  "name": "ads_01_sales_analysis_etl",
+  "description": "ADS层-销售分析报表ETL",
+  "globalParams": [],
+  "tasks": [
+    {
+      "name": "ads_01_sales_analysis_etl_task",
+      "description": "ADS层-销售分析报表ETL",
+      "taskType": "SQL",
+      "taskParams": {
+        "type": "MYSQL",
+        "datasource": 1,
+        "sql": "-- 销售分析报表数据生成\nINSERT INTO ads_sales_analysis SELECT * FROM dws_order_daily;",
+        "sqlType": "0",
+        "sendEmail": false,
+        "displayRows": 10,
+        "localParams": [],
+        "resourceList": [],
+        "dependence": {},
+        "conditionResult": {
+          "successNode": [],
+          "failedNode": []
+        },
+        "waitStartTimeout": {}
+      },
+      "flag": "YES",
+      "taskPriority": "MEDIUM",
+      "workerGroup": "default",
+      "timeoutFlag": "CLOSE",
+      "timeoutNotifyStrategy": null,
+      "timeout": 0
+    }
+  ],
+  "tenantId": 1,
+  "timeout": 0,
+  "releaseState": "ONLINE",
+  "param": null,
+  "executionType": "PARALLEL",
+  "schedule": {
+    "crontab": "0 0 5 * * ?",
+    "timezoneId": "Asia/Shanghai"
+  }
+}

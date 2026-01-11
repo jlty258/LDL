@@ -10,9 +10,29 @@ services:
     environment:
       - TZ=Asia/Shanghai
       - PYTHONUNBUFFERED=1
+      # DolphinScheduler REST API 配置（容器网络中使用服务名）
+      - DS_BASE_URL=http://dolphinscheduler:12345
+      - DS_USERNAME=admin
+      - DS_PASSWORD=dolphinscheduler123
+      # PyDolphinScheduler 配置（容器网络中使用服务名）
+      - DS_HOST=dolphinscheduler
+      - DS_PORT=12345
+      - DS_PROJECT_NAME=制造业数仓
+      - DS_DATASOURCE_NAME=MySQL
+      - DS_DATASOURCE_ID=1
+      # Java Gateway 配置（PyDolphinScheduler 需要）
+      - PYDS_JAVA_GATEWAY_ADDRESS=dolphinscheduler
+      - PYDS_JAVA_GATEWAY_PORT=25333
+      # MySQL 配置（容器网络中使用服务名）
+      - MYSQL_HOST=mysql-db
+      - MYSQL_PORT=3306
+      - MYSQL_DATABASE=sqlExpert
+      - MYSQL_USERNAME=sqluser
+      - MYSQL_PASSWORD=sqlpass123
     volumes:
       - .:/workspace/scripts
       - ../data_volume:/workspace/data_volume
+      - ../datawarehouse:/workspace/datawarehouse
     networks:
       - ldl-net
     restart: unless-stopped

@@ -1,0 +1,43 @@
+{
+  "name": "ods_02_production_etl",
+  "description": "ODS层-生产数据ETL",
+  "globalParams": [],
+  "tasks": [
+    {
+      "name": "ods_02_production_etl_task",
+      "description": "ODS层-生产数据ETL",
+      "taskType": "SQL",
+      "taskParams": {
+        "type": "MYSQL",
+        "datasource": 1,
+        "sql": "-- 生产相关表数据加载\nSELECT COUNT(*) FROM ods_production_order;",
+        "sqlType": "0",
+        "sendEmail": false,
+        "displayRows": 10,
+        "localParams": [],
+        "resourceList": [],
+        "dependence": {},
+        "conditionResult": {
+          "successNode": [],
+          "failedNode": []
+        },
+        "waitStartTimeout": {}
+      },
+      "flag": "YES",
+      "taskPriority": "MEDIUM",
+      "workerGroup": "default",
+      "timeoutFlag": "CLOSE",
+      "timeoutNotifyStrategy": null,
+      "timeout": 0
+    }
+  ],
+  "tenantId": 1,
+  "timeout": 0,
+  "releaseState": "ONLINE",
+  "param": null,
+  "executionType": "PARALLEL",
+  "schedule": {
+    "crontab": "0 0 2 * * ?",
+    "timezoneId": "Asia/Shanghai"
+  }
+}

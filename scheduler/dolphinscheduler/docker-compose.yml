@@ -5,11 +5,15 @@ services:
     hostname: dolphinscheduler
     ports:
       - "12345:12345"
+      - "25333:25333"  # Java Gateway 端口
     volumes:
       - ../../data_volume/dolphinscheduler-data:/tmp/dolphinscheduler
     restart: unless-stopped
     environment:
       - TZ=Asia/Shanghai
+      # Java Gateway 配置
+      - JAVA_GATEWAY_ENABLED=true
+      - JAVA_GATEWAY_PORT=25333
     networks:
       - ldl-net
 

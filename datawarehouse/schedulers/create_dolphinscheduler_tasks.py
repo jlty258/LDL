@@ -12,42 +12,50 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '../../scripts'))
 from dolphinscheduler_rest_api import DolphinSchedulerRESTClient
 import json
 
-# DolphinScheduler配置
+# DolphinScheduler配置（支持环境变量）
 DS_CONFIG = {
-    'base_url': 'http://localhost:12345',
-    'username': 'admin',
-    'password': 'dolphinscheduler123'
+    'base_url': os.getenv('DS_BASE_URL', 'http://localhost:12345'),
+    'username': os.getenv('DS_USERNAME', 'admin'),
+    'password': os.getenv('DS_PASSWORD', 'dolphinscheduler123')
 }
 
-# MySQL连接配置
+# MySQL连接配置（支持环境变量）
 MYSQL_CONFIG = {
-    'host': 'localhost',
-    'port': 3306,
-    'database': 'sqlExpert',
-    'username': 'sqluser',
-    'password': 'sqlpass123'
+    'host': os.getenv('MYSQL_HOST', 'localhost'),
+    'port': int(os.getenv('MYSQL_PORT', '3306')),
+    'database': os.getenv('MYSQL_DATABASE', 'sqlExpert'),
+    'username': os.getenv('MYSQL_USERNAME', 'sqluser'),
+    'password': os.getenv('MYSQL_PASSWORD', 'sqlpass123')
 }
 
 def create_sql_task(task_name, sql_file, description):
     """创建SQL任务定义"""
-    sql_path = f"/datawarehouse/sql/{sql_file}"
-    
     # 读取SQL文件内容
     sql_content = ""
     try:
-        sql_file_path = os.path.join(os.path.dirname(__file__), '..', 'sql', sql_file)
-        if os.path.exists(sql_file_path):
-            with open(sql_file_path, 'r', encoding='utf-8') as f:
-                sql_content = f.read()
+        # 优先使用容器中的路径，其次使用相对路径
+        container_path = f"/workspace/datawarehouse/sql/{sql_file}"
+        relative_path = os.path.join(os.path.dirname(__file__), '..', 'sql', sql_file)
+        
+        if os.path.exists(container_path):
+            sql_file_path = container_path
+        elif os.path.exists(relative_path):
+            sql_file_path = relative_path
+        else:
+            raise FileNotFoundError(f"SQL文件不存在: {sql_file}")
+        
+        with open(sql_file_path, 'r', encoding='utf-8') as f:
+            sql_content = f.read()
     except Exception as e:
         print(f"  警告: 无法读取SQL文件 {sql_file}: {e}")
         sql_content = f"-- {description}\nSELECT 1;"
     
+    # 根据DolphinScheduler 3.3.0 API文档，任务结构可能需要调整
     return {
+        "type": "SQL",
         "name": task_name,
         "description": description,
-        "taskType": "SQL",
-        "taskParams": {
+        "params": {
             "type": "MYSQL",
             "datasource": 1,  # 数据源ID，需要在实际环境中配置
             "sql": sql_content[:5000] if len(sql_content) > 5000 else sql_content,  # 限制长度
@@ -63,12 +71,14 @@ def create_sql_task(task_name, sql_file, description):
             },
             "waitStartTimeout": {}
         },
-        "flag": "YES",
-        "taskPriority": "MEDIUM",
-        "workerGroup": "default",
-        "timeoutFlag": "CLOSE",
-        "timeoutNotifyStrategy": None,
-        "timeout": 0
+        "runFlag": "NORMAL",
+        "dependence": {},
+        "maxRetryTimes": "0",
+        "retryInterval": "1",
+        "timeout": {
+            "strategy": "FAILED",
+            "interval": 1
+        }
     }
 
 def create_shell_task(task_name, command, description):
@@ -97,17 +107,22 @@ def create_shell_task(task_name, command, description):
     }
 
 def create_workflow_definition(workflow_name, tasks, description):
-    """创建工作流定义"""
+    """创建工作流定义 - DolphinScheduler 3.3.0格式"""
+    # 根据DolphinScheduler 3.3.0 API文档
+    # locations用于UI显示任务位置（空字典或包含任务位置信息）
+    locations = {}
+    # connects用于定义任务之间的连接关系（空列表，因为单个任务）
+    connects = []
+    
     return {
         "name": workflow_name,
         "description": description,
         "globalParams": [],
+        "locations": locations,
+        "connects": connects,
         "tasks": tasks,
         "tenantId": 1,
-        "timeout": 0,
-        "releaseState": "ONLINE",
-        "param": None,
-        "executionType": "PARALLEL"
+        "timeout": 0
     }
 
 def create_all_workflows():
@@ -129,7 +144,8 @@ def create_all_workflows():
             return
     
     project_code = project_list[0].get('code')
-    print(f"使用项目: {project_list[0].get('name')} (代码: {project_code})")
+    project_id = project_list[0].get('id')
+    print(f"使用项目: {project_list[0].get('name')} (代码: {project_code}, ID: {project_id})")
     
     # 定义30个调度任务
     workflows = [
@@ -302,7 +318,7 @@ def create_all_workflows():
                 workflow_info["description"]
             )
             
-            result = client.create_process_definition(project_code, workflow_def)
+            result = client.create_process_definition(project_code, workflow_def, project_id)
             
             if result.get('code') == 0:
                 print(f"✓ [{i:2d}/30] 创建工作流成功: {workflow_info['name']}")

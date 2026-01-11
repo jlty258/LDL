@@ -1,0 +1,43 @@
+{
+  "name": "dwd_01_order_fact_etl",
+  "description": "DWD层-订单事实表ETL",
+  "globalParams": [],
+  "tasks": [
+    {
+      "name": "dwd_01_order_fact_etl_task",
+      "description": "DWD层-订单事实表ETL",
+      "taskType": "SQL",
+      "taskParams": {
+        "type": "MYSQL",
+        "datasource": 1,
+        "sql": "-- 复杂ETL SQL脚本（超过100行）\n-- 从ODS层到DWD层到DWS层到ADS层的完整数据流转\n\nUSE sqlExpert;\n\n-- ============================================\n-- 第一部分：ODS -> DWD 数据清洗和转换\n-- ============================================\n\n-- 1. 订单事实表ETL（清洗订单数据，关联客户和产品信息）\nINSERT INTO dwd_order_fact (\n    order_id, order_no, customer_id, product_id, order_date,\n    order_year, order_month, order_quarter, order_status,\n    order_amount, order_quantity, unit_price,\n    sales_rep_id, warehouse_id, region\n)\nSELECT \n    om.order_id,\n    om.order_no,\n    om.customer_id,\n    od.product_id,\n    DATE(om.order_date) as order_date,\n    YEAR(om.order_date) as order_year,\n    MONTH(om.order_date) as order_month,\n    QUARTER(om.order_date) as order_quarter,\n    CASE \n        WHEN om.order_status IN ('待确认', '已确认', '生产中', '已完成') THEN om.order_status\n        ELSE '其他'\n    END as order_status,\n    COALESCE(od.amount, 0) as order_amount,\n    COALESCE(od.quantity, 0) as order_quantity,\n    COALESCE(od.unit_price, 0) as unit_price,\n    om.sales_rep_id,\n    om.warehouse_id,\n    COALESCE(cm.region, '未知') as region\nFROM ods_order_master om\nINNER JOIN ods_order_detail od ON om.order_id = od.order_id\nLEFT JOIN ods_customer_master cm ON om.customer_id = cm.customer_id\nWHERE om.order_date >= DATE_SUB(CURDATE(), INTERVAL 2 YEAR)\n  AND om.order_status IS NOT NULL\n  AND od.quantity > 0\n  AND od.unit_price > 0\nON DUPLICATE KEY UPDATE\n    order_no = VALUES(order_no),\n    customer_id = VALUES(customer_id),\n    product_id = VALUES(product_id),\n    order_date = VALUES(order_date),\n    order_year = VALUES(order_year),\n    order_month = VALUES(order_month),\n    order_quarter = VALUES(order_quarter),\n    order_status = VALUES(order_status),\n    order_amount = VALUES(order_amount),\n    order_quantity = VALUES(order_quantity),\n    unit_price = VALUES(unit_price),\n    sales_rep_id = VALUES(sales_rep_id),\n    warehouse_id = VALUES(warehouse_id),\n    region = VALUES(region),\n    update_time = CURRENT_TIMESTAMP;\n\n-- 2. 生产事实表ETL（清洗生产数据，计算完成率）\nINSERT INTO dwd_production_fact (\n    production_id, work_order_id, plan_id, product_id,\n    workshop_id, production_line_id, production_date,\n    production_year, production_month, production_quarter,\n    plan_quantity, actual_quantity, completed_quantity,\n    completion_rate, production_status,\n    start_time, end_time, duration_hours\n)\nSELECT \n    po.work_order_id as production_id,\n    po.work_order_id,\n    po.plan_id,\n    po.product_id,\n    po.workshop_id,\n    po.production_line_id,\n    DATE(COALESCE(po.start_time, pp.plan_date)) as production_date,\n    YEAR(COALESCE(po.start_time, pp.plan_date)) as production_year,\n    MONTH(COALESCE(po.start_time, pp.plan_date)) as production_month,\n    QUARTER(COALESCE(po.start_time, pp.plan_date)) as production_quarter,\n    COALESCE(pp.plan_quantity, po.order_quantity, 0) as plan_quantity,\n    COALESCE(pp.actual_quantity, 0) as actual_quantity,\n    COALESCE(po.completed_quantity, 0) as completed_quantity,\n    CASE \n        WHEN COALESCE(pp.plan_quantity, po.order_quantity, 0) > 0 \n        THEN (COALESCE(po.completed_quantity, 0) / COALESCE(pp.plan_quantity, po.order_quantity, 1)) * 100\n        ELSE 0\n    END as completion_rate,\n    COALESCE(po.order_status, '未知') as production_status,\n    po.start_time,\n    po.end_time,\n    CASE \n        WHEN po.start_time IS NOT NULL AND po.end_time IS NOT NULL\n        THEN TIMESTAMPDIFF(HOUR, po.start_time, po.end_time)\n        ELSE NULL\n    END as duration_hours\nFROM ods_production_order po\nLEFT JOIN ods_production_plan pp ON po.plan_id = pp.plan_id\nWHERE po.start_time >= DATE_SUB(CURDATE(), INTERVAL 2 YEAR)\n  AND po.product_id IS NOT NULL\nON DUPLICATE KEY UPDATE\n    plan_id = VALUES(plan_id),\n    product_id = VALUES(product_id),\n    workshop_id = VALUES(workshop_id),\n    production_line_id = VALUES(production_line_id),\n    production_date = VALUES(production_date),\n    production_year = VALUES(production_year),\n    production_month = VALUES(production_month),\n    production_quarter = VALUES(production_quarter),\n    plan_quantity = VALUES(plan_quantity),\n    actual_quantity = VALUES(actual_quantity),\n    completed_quantity = VALUES(completed_quantity),\n    completion_rate = VALUES(completion_rate),\n    production_status = VALUES(production_status),\n    start_time = VALUES(start_time),\n    end_time = VALUES(end_time),\n    duration_hours = VALUES(duration_hours);\n\n-- 3. 库存事实表ETL（清洗库存数据，关联物料和仓库信息）\nINSERT INTO dwd_inventory_fact (\n    inventory_id, material_id, warehouse_id, inventory_date,\n    inventory_year, inventory_month, quantity,\n    available_quantity, reserved_quantity,\n    unit_cost, total_cost, material_category, warehouse_type\n)\nSELECT \n    inv.inventory_id,\n    inv.material_id,\n    inv.warehouse_id,\n    CURDATE() as inventory_date,\n    YEAR(CURDATE()) as inventory_year,\n    MONTH(CURDATE()) as inventory_month,\n    COALESCE(inv.quantity, 0) as quantity,\n    COALESCE(inv.available_quantity, 0) as available_quantity,\n    COALESCE(inv.reserved_quantity, 0) as reserved_quantity",
+        "sqlType": "0",
+        "sendEmail": false,
+        "displayRows": 10,
+        "localParams": [],
+        "resourceList": [],
+        "dependence": {},
+        "conditionResult": {
+          "successNode": [],
+          "failedNode": []
+        },
+        "waitStartTimeout": {}
+      },
+      "flag": "YES",
+      "taskPriority": "MEDIUM",
+      "workerGroup": "default",
+      "timeoutFlag": "CLOSE",
+      "timeoutNotifyStrategy": null,
+      "timeout": 0
+    }
+  ],
+  "tenantId": 1,
+  "timeout": 0,
+  "releaseState": "ONLINE",
+  "param": null,
+  "executionType": "PARALLEL",
+  "schedule": {
+    "crontab": "0 0 3 * * ?",
+    "timezoneId": "Asia/Shanghai"
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "name": "dws_03_inventory_daily_etl",
+  "description": "DWS层-库存日汇总ETL",
+  "globalParams": [],
+  "tasks": [
+    {
+      "name": "dws_03_inventory_daily_etl_task",
+      "description": "DWS层-库存日汇总ETL",
+      "taskType": "SQL",
+      "taskParams": {
+        "type": "MYSQL",
+        "datasource": 1,
+        "sql": "-- 库存日汇总数据计算\nINSERT INTO dws_inventory_daily SELECT * FROM dwd_inventory_fact;",
+        "sqlType": "0",
+        "sendEmail": false,
+        "displayRows": 10,
+        "localParams": [],
+        "resourceList": [],
+        "dependence": {},
+        "conditionResult": {
+          "successNode": [],
+          "failedNode": []
+        },
+        "waitStartTimeout": {}
+      },
+      "flag": "YES",
+      "taskPriority": "MEDIUM",
+      "workerGroup": "default",
+      "timeoutFlag": "CLOSE",
+      "timeoutNotifyStrategy": null,
+      "timeout": 0
+    }
+  ],
+  "tenantId": 1,
+  "timeout": 0,
+  "releaseState": "ONLINE",
+  "param": null,
+  "executionType": "PARALLEL",
+  "schedule": {
+    "crontab": "0 0 4 * * ?",
+    "timezoneId": "Asia/Shanghai"
+  }
+}

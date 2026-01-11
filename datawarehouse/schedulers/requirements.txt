@@ -1,0 +1,8 @@
+# DolphinScheduler 相关依赖
+
+# PyDolphinScheduler - 官方 Python API，支持"工作流即代码"
+# 支持 DolphinScheduler 3.3.0+
+apache-dolphinscheduler>=3.0.0
+
+# REST API 客户端依赖
+requests>=2.25.0
