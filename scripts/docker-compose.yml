@@ -1,6 +1,9 @@
 services:
   python-scripts:
-    image: python:3.12-slim
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: python-3.12-slim-uber:latest
     container_name: python-scripts
     hostname: python-scripts
     working_dir: /workspace/scripts
@@ -10,20 +13,10 @@ services:
     volumes:
       - .:/workspace/scripts
       - ../data_volume:/workspace/data_volume
-      - python-packages:/usr/local/lib/python3.11/site-packages
+      - ../datawarehouse:/workspace/datawarehouse
     networks:
       - ldl-net
-    command: >
-      sh -c "
-      pip install --quiet --upgrade pip &&
-      pip install --quiet -r /workspace/scripts/requirements.txt &&
-      echo 'Python环境已就绪，可以执行脚本了' &&
-      tail -f /dev/null
-      "
     restart: unless-stopped
-
-volumes:
-  python-packages:
 
 networks:
   ldl-net:
