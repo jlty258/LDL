@@ -24,3 +24,8 @@ services:
     ports:
       - "8080:8080"
     restart: unless-stopped
+
+networks:
+  ldl-net:
+    external: true
+    name: ldl-net

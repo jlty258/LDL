@@ -9,13 +9,13 @@ services:
     environment:
       - TZ=Asia/Shanghai
     volumes:
-      - ./sqlmesh_project:/workspace
+      - ../../data_volume/sqlmesh/sqlmesh_project:/workspace
     networks:
-      - db-network
+      - ldl-net
     entrypoint: ["/bin/sh", "-c", "tail -f /dev/null"]
     restart: unless-stopped
 
 networks:
-  db-network:
+  ldl-net:
     external: true
-    name: physical_dl_db-network
+    name: ldl-net

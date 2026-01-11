@@ -45,6 +45,9 @@ logs/
 database_statistics_report.txt
 *.txt.bak
 
+# 数据卷
+data_volume/
+
 # 环境变量（保留示例文件）
 .env
 .env.local

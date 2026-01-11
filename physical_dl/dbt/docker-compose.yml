@@ -9,14 +9,14 @@ services:
     environment:
       - TZ=Asia/Shanghai
     volumes:
-      - ./dbt_project:/usr/app/dbt
-      - ./profiles:/root/.dbt
+      - ../../data_volume/dbt/dbt_project:/usr/app/dbt
+      - ../../data_volume/dbt/profiles:/root/.dbt
     networks:
-      - db-network
+      - ldl-net
     entrypoint: ["/bin/sh", "-c", "tail -f /dev/null"]
     restart: unless-stopped
 
 networks:
-  db-network:
+  ldl-net:
     external: true
-    name: physical_dl_db-network
+    name: ldl-net

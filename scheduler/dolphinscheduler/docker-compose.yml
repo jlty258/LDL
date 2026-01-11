@@ -6,17 +6,15 @@ services:
     ports:
       - "12345:12345"
     volumes:
-      - dolphinscheduler-data:/tmp/dolphinscheduler
+      - ../../data_volume/dolphinscheduler-data:/tmp/dolphinscheduler
     restart: unless-stopped
     environment:
       - TZ=Asia/Shanghai
     networks:
-      - dolphinscheduler-network
+      - ldl-net
 
 networks:
-  dolphinscheduler-network:
-    driver: bridge
-
-volumes:
-  dolphinscheduler-data:
+  ldl-net:
+    external: true
+    name: ldl-net
 

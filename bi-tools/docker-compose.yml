@@ -9,10 +9,10 @@ services:
     environment:
       - TZ=Asia/Shanghai
     volumes:
-      - appsmith-stacks:/appsmith-stacks
+      - ../data_volume/appsmith-stacks:/appsmith-stacks
     restart: unless-stopped
     networks:
-      - bi-network
+      - ldl-net
 
   # Lightdash - BI 工具，基于 dbt
   # 简化版：使用项目现有的 PostgreSQL（如果不需要独立数据库，可以注释掉）
@@ -23,6 +23,7 @@ services:
       - "8889:8080"
     environment:
       - LIGHTDASH_SECRET_KEY=lightdash_secret_key_change_in_production
+      - LIGHTDASH_SECRET=lightdash_secret_key_change_in_production
       - LIGHTDASH_DATABASE_HOST=postgres-db
       - LIGHTDASH_DATABASE_PORT=5432
       - LIGHTDASH_DATABASE_NAME=sqlExpert
@@ -31,19 +32,12 @@ services:
       - LIGHTDASH_SITE_URL=http://localhost:8889
       - TZ=Asia/Shanghai
     volumes:
-      - lightdash-data:/app/.lightdash
+      - ../data_volume/lightdash-data:/app/.lightdash
     restart: unless-stopped
     networks:
-      - bi-network
-      - db-network
+      - ldl-net
 
 networks:
-  bi-network:
-    driver: bridge
-  db-network:
+  ldl-net:
     external: true
-    name: physical_dl_db-network
-
-volumes:
-  appsmith-stacks:
-  lightdash-data:
+    name: ldl-net
