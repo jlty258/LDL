@@ -1,0 +1,24 @@
+# Jupyter Notebook
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# 环境变量
+.env
+.env.local
+
+# 数据文件
+*.csv
+*.xlsx
+*.parquet
+*.pkl
+*.pickle
+
+# 日志
+*.log

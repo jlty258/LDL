@@ -1,0 +1,47 @@
+services:
+  # Jupyter Notebook - 数据分析和 SQL 执行环境
+  # 使用自定义 Dockerfile 构建镜像，依赖在构建时安装
+  jupyter:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: jupyter-ldl:latest
+    container_name: jupyter-notebook
+    ports:
+      - "8890:8888"
+    environment:
+      - TZ=Asia/Shanghai
+      - JUPYTER_ENABLE_LAB=yes
+      - JUPYTER_TOKEN=ldl-jupyter-2024
+      # 数据库连接配置（环境变量，可在 notebook 中使用）
+      - MYSQL_HOST=mysql-db
+      - MYSQL_PORT=3306
+      - MYSQL_DATABASE=sqlExpert
+      - MYSQL_USERNAME=sqluser
+      - MYSQL_PASSWORD=sqlpass123
+      - POSTGRES_HOST=postgres-db
+      - POSTGRES_PORT=5432
+      - POSTGRES_DATABASE=sqlExpert
+      - POSTGRES_USERNAME=postgres
+      - POSTGRES_PASSWORD=postgres123
+    volumes:
+      # 挂载 notebook 工作目录
+      - ./notebooks:/home/jovyan/work
+      # 挂载数据卷（如果需要访问数据文件）
+      - ../data_volume:/home/jovyan/data_volume
+      # 挂载数据仓库 SQL 文件（如果需要）
+      - ../datawarehouse:/home/jovyan/datawarehouse
+    working_dir: /home/jovyan/work
+    restart: unless-stopped
+    networks:
+      - ldl-net
+    command: start-notebook.sh \
+      --NotebookApp.token='ldl-jupyter-2024' \
+      --NotebookApp.password='' \
+      --NotebookApp.allow_origin='*' \
+      --NotebookApp.ip='0.0.0.0'
+
+networks:
+  ldl-net:
+    external: true
+    name: ldl-net
