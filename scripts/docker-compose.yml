@@ -13,7 +13,6 @@ services:
     volumes:
       - .:/workspace/scripts
       - ../data_volume:/workspace/data_volume
-      - ../datawarehouse:/workspace/datawarehouse
     networks:
       - ldl-net
     restart: unless-stopped

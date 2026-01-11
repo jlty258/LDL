@@ -38,7 +38,7 @@ DB_CONFIG = {
         'charset': 'utf8mb4'
     },
     'postgresql': {
-        'host': 'mysql-db',
+        'host': 'postgres-db',
         'port': 5432,
         'user': 'postgres',
         'password': 'postgres123',
@@ -114,14 +114,51 @@ class DataGenerator:
     
     def execute(self, sql: str, params: tuple = None):
         """执行SQL语句"""
-        if params:
-            self.cursor.execute(sql, params)
-        else:
-            self.cursor.execute(sql)
+        try:
+            if params:
+                self.cursor.execute(sql, params)
+            else:
+                self.cursor.execute(sql)
+        except Exception as e:
+            # 忽略重复键错误
+            if 'duplicate' in str(e).lower() or '1062' in str(e) or 'unique' in str(e).lower():
+                pass  # 忽略重复数据错误
+            else:
+                raise
     
     def commit(self):
         """提交事务"""
         self.conn.commit()
+    
+    def clear_ods_tables(self):
+        """清空所有ODS表"""
+        print("\n清空现有ODS表数据...")
+        ods_tables = [
+            'ods_factory_master', 'ods_department_master', 'ods_workshop_master',
+            'ods_production_line', 'ods_customer_master', 'ods_supplier_master',
+            'ods_product_master', 'ods_material_master', 'ods_employee_master',
+            'ods_warehouse_master', 'ods_order_master', 'ods_order_detail',
+            'ods_production_plan', 'ods_production_order', 'ods_bom',
+            'ods_inventory', 'ods_purchase_order', 'ods_purchase_detail',
+            'ods_inbound_order', 'ods_inbound_detail', 'ods_outbound_order',
+            'ods_outbound_detail', 'ods_equipment_master', 'ods_equipment_runtime',
+            'ods_quality_inspection', 'ods_defect_record', 'ods_attendance',
+            'ods_sales_payment', 'ods_cost_center', 'ods_cost_detail'
+        ]
+        
+        for table in ods_tables:
+            try:
+                if self.db_type == 'mysql':
+                    self.cursor.execute(f"DELETE FROM {table}")
+                else:
+                    self.cursor.execute(f'DELETE FROM "{table}"')
+            except Exception as e:
+                # 表不存在时忽略错误
+                if 'doesn\'t exist' not in str(e) and 'does not exist' not in str(e):
+                    print(f"  ⚠ 清空 {table} 时出错: {str(e)[:50]}")
+        
+        self.commit()
+        print("✓ ODS表数据已清空")
     
     def generate_all(self):
         """生成所有测试数据"""
@@ -130,6 +167,8 @@ class DataGenerator:
         print("=" * 60)
         
         try:
+            # 先清空现有数据
+            self.clear_ods_tables()
             # 基础主数据
             self.generate_factories()
             self.generate_departments()

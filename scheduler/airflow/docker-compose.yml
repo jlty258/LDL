@@ -17,15 +17,12 @@ services:
       _AIRFLOW_WWW_USER_FIRSTNAME: ${_AIRFLOW_WWW_USER_FIRSTNAME:-Airflow}
       _AIRFLOW_WWW_USER_LASTNAME: ${_AIRFLOW_WWW_USER_LASTNAME:-User}
     volumes:
-      - ./dags:/opt/airflow/dags
-      - ./logs:/opt/airflow/logs
-      - ./plugins:/opt/airflow/plugins
-      - ./config:/opt/airflow/config
+      - ../../data_volume/airflow/dags:/opt/airflow/dags
+      - ../../data_volume/airflow/logs:/opt/airflow/logs
+      - ../../data_volume/airflow/plugins:/opt/airflow/plugins
+      - ../../data_volume/airflow/config:/opt/airflow/config
     ports:
       - "8080:8080"
     restart: unless-stopped
-
-networks:
-  ldl-net:
-    external: true
-    name: ldl-net
+    networks:
+      - ldl-net
